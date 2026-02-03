@@ -82,3 +82,27 @@ function sign_up($pdo, $post) {
     }
     return $result;
 }
+
+
+// Verification validité données et stockage dans session
+function log_in($pdo, $username, $password) {
+    $user = user_by_username($pdo, $username);
+    if ($user === false) {
+        return "Identifiant ou mot de passe incorrect";
+    }
+    if (!password_verify($password, $user["password"])) {
+        return "Identifiant ou mot de passe incorrect";
+    }
+    $_SESSION["id"] = $user["id"];
+    return true;
+}
+
+
+
+//  Processus d'appel pour vérification puis connexion
+function username_process($pdo, $post) {
+    if (empty_fields($post, ["username", "password"])) {
+        return "Veuillez renseigner votre login et votre mot de passe.";
+    }
+    return log_in($pdo, trim($post["username"]), $post["password"]);
+}
