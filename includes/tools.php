@@ -106,3 +106,38 @@ function username_process($pdo, $post) {
     }
     return log_in($pdo, trim($post["username"]), $post["password"]);
 }
+
+
+// Mise à jour des informations de l'utilisateur dans BDD
+function update_profile($pdo, $id, $username, $password) {
+    if (username_exists($pdo, $username, $id)) {
+        return "Ce nom d'utilisateur est déjà utilisé";
+    }
+    $sql = "UPDATE user SET username = :username, password = :password WHERE id = :id";
+    $query = $pdo->prepare($sql);
+    $query->execute([':username' => $username, ':password' => password_hash($password, PASSWORD_DEFAULT), ':id' => $id]);
+    return true;
+}
+
+
+//  Processus d'appel pour vérification puis modification
+function profile_modification_process($pdo, $post) {
+    if (empty_fields($post, ["username", "password", "confirm_password"])) {
+        return "Veuillez remplir l'ensemble des champs.";
+    }
+    $result = field_verification(trim($post["username"]), $post["password"], $post["confirm_password"]);
+    if ($result === true) {
+        return update_profile($pdo, $_SESSION["id"], trim($post["username"]), $post["password"]);
+    }
+    return $result;
+}
+
+
+
+// Récupération informations utilisateur par ID
+function get_information_user($pdo, $id){
+    $sql = "SELECT * FROM user WHERE id = :id";
+    $query = $pdo->prepare($sql);
+    $query->execute([':id' => $id]);
+    return $query->fetch(PDO::FETCH_ASSOC);
+}
