@@ -15,9 +15,9 @@ for ($i = 0; $i < 7; $i++) {
 $heures = [];
 
 $debut = strtotime("today 08:00");
-$fin   = strtotime("today 19:00");
+$fin = strtotime("today 19:00");
 
-while ($debut <= $fin) {
+while ($debut < $fin) {
     array_push($heures, date("H:i", $debut));
     $debut = strtotime("+1 hour", $debut);
 }
