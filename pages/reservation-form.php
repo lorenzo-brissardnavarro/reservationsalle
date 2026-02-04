@@ -1,29 +1,14 @@
 <?php
 
+include '../includes/tools.php';
+
 if(isset($_GET['date'])){
     $creneau = $_GET['date'];
 }
 $jour_choisi = date("Y-m-d", strtotime($creneau));
 $heure_choisie = date("H:i", strtotime($creneau));
-
-$semaine = [];
-
-$debut = strtotime("monday this week");
-
-for ($i = 0; $i < 7; $i++) {
-    array_push($semaine, date("Y-m-d", $debut));
-    $debut = strtotime("+1 day", $debut);
-}
-
-$heures = [];
-
-$debut = strtotime("today 08:00");
-$fin = strtotime("today 19:00");
-
-while ($debut < $fin) {
-    array_push($heures, date("H:i", $debut));
-    $debut = strtotime("+1 hour", $debut);
-}
+$semaine = get_days();
+$heures = get_hours();
 
 
 

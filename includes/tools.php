@@ -141,3 +141,29 @@ function get_information_user($pdo, $id){
     $query->execute([':id' => $id]);
     return $query->fetch(PDO::FETCH_ASSOC);
 }
+
+
+
+// Récupération des jours de la semaine
+function get_days(){
+    date_default_timezone_set("Europe/Paris");
+    $semaine = [];
+    $debut = strtotime("monday this week");
+    for ($i = 0; $i < 7; $i++) {
+        array_push($semaine, date("Y-m-d", $debut));
+        $debut = strtotime("+1 day", $debut);
+    }
+    return $semaine;
+}
+
+// Récupération des heures
+function get_hours(){
+    $heures = [];
+    $debut = strtotime("today 08:00");
+    $fin = strtotime("today 19:00");
+    while ($debut < $fin) {
+        array_push($heures, date("H:i", $debut));
+        $debut = strtotime("+1 hour", $debut);
+    }
+    return $heures;
+}
