@@ -1,9 +1,18 @@
 <?php
-
+include '../includes/config.php';
+include '../includes/header.php';
 include '../includes/tools.php';
 
+date_default_timezone_set("Europe/Paris");
 $semaine = get_days();
 $heures = get_hours();
+$debutSemaine = date('Y-m-d 00:00:00', strtotime(min($semaine)));
+$finSemaine = date('Y-m-d 23:59:59', strtotime(max($semaine)));
+$events = get_all($pdo, $debutSemaine, $finSemaine);
+foreach ($events as $event) {
+    $event['start_ts'] = strtotime($event['start_date']);
+    $event['end_ts']   = strtotime($event['end_date']);
+}
 
 
 
@@ -22,19 +31,26 @@ $heures = get_hours();
   foreach ($heures as $heure) {
     echo '<tr>
           <td>' . $heure . '</td>';
-          foreach ($semaine as $jour) {
-            $date = strtotime($jour . " " . $heure);
-            $dateUrl = date("Y-m-d H:i:s", $date);
-            if(date("N", $date) == 6 || date("N", $date) == 7){
-              echo '<td>
-                    Impossible
-                    </td>';
-            } else {
-              echo '<td>
-                  <a href="reservation-form.php?date=' . urlencode($dateUrl) . '">Réserver</a>
+    foreach ($semaine as $jour) {
+        $start_ts = strtotime($jour . ' ' . $heure);
+        $end_ts   = strtotime('+1 hour', $start_ts);
+        if (date('N', $start_ts) >= 6) {
+            echo '<td>Impossible</td>';
+            continue;
+        }
+        $event = event_taken($events, $start_ts, $end_ts);
+        if ($event) {
+            echo '<td>
+                    RDV pris
                   </td>';
-            }
-          }
+        } else {
+            echo '<td>
+                <a href="reservation-form.php?date=' . date('Y-m-d H:i:s', $start_ts) . '">
+                    Réserver
+                </a>
+            </td>';
+        }
+    }
     echo '</tr>';
   }
   ?>
