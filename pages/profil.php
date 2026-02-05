@@ -26,7 +26,7 @@ $error_suppression = "";
 // Suppression message
 if (!empty($_POST['delete'])) {
     $delete = (int)$_POST['delete'];
-    if (!event_deletion($pdo, $delete, $_SESSION['id']))) {
+    if (!event_deletion($pdo, $delete, $_SESSION['id'])) {
         $error_suppression = "Impossible de supprimer ce message.";
     } else {
         header("Location: profil.php");
@@ -40,7 +40,7 @@ $semaine = get_days();
 $heures = get_hours();
 $debutSemaine = date('Y-m-d 00:00:00', strtotime(min($semaine)));
 $finSemaine = date('Y-m-d 23:59:59', strtotime(max($semaine)));
-$events = get_all($pdo, $debutSemaine, $finSemaine);
+$events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemaine);
 
 ?>
 
@@ -82,8 +82,8 @@ $events = get_all($pdo, $debutSemaine, $finSemaine);
             if (!empty($events)) {
                 foreach ($events as $event) {
                     echo '<tr>
-                        <td>' . $event['start_date'] . '</td>
-                        <td>' . $event['end_date'] . '</td>
+                        <td>' . htmlspecialchars($event['start_date']) . '</td>
+                        <td>' . htmlspecialchars($event['end_date']) . '</td>
                         <td>
                             <a href="reservation_detail.php?id=' . $event['id'] . '">
                                 <i class="fa-solid fa-magnifying-glass-plus"></i>
@@ -97,7 +97,6 @@ $events = get_all($pdo, $debutSemaine, $finSemaine);
                                 </button>
                             </form>
                         </td>
-                    </td>
                     </tr>';
                 }
             }
