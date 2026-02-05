@@ -194,3 +194,40 @@ section {
     margin-bottom: 10px;
     color: #555;
 }
+
+
+
+
+
+
+
+
+
+.slot {
+    text-align: center;
+    padding: 8px;
+}
+
+.slot.taken {
+    background-color: #ddd;
+    color: #444;
+}
+
+.slot.impossible {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.slot.available {
+    background-color: #d1e7dd;
+}
+
+.slot.available a {
+    color: #0f5132;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.slot.available:hover {
+    background-color: #badbcc;
+}

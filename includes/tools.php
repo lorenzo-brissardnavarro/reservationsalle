@@ -260,7 +260,8 @@ function event_deletion($pdo, $id, $creator_id){
 
 // Fonction récupérer tous les RDV de la semaine
 function get_all($pdo, $startWeek, $endWeek){
-    $sql = "SELECT * FROM event INNER JOIN user ON user.id = event.creator_id WHERE start_date < :end AND end_date > :start";
+    $sql = "SELECT user.username, event.id, event.event_title, event.description, event.start_date, event.end_date, event.creator_id
+     FROM event INNER JOIN user ON user.id = event.creator_id WHERE start_date < :end AND end_date > :start";
     $query = $pdo->prepare($sql);
     $query->execute([':start' => $startWeek, ':end' => $endWeek]);
     return $query->fetchAll(PDO::FETCH_ASSOC);

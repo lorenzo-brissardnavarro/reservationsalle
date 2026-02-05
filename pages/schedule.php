@@ -37,13 +37,14 @@ foreach ($events as $event) {
         $end_ts   = strtotime('+1 hour', $start_ts);
         $event = event_taken($events, $start_ts, $end_ts);
         if ($event) {
-            echo '<td>
-                    RDV pris
-                  </td>';
+          echo '<td class="slot taken">
+                  <h3>' . htmlspecialchars($event['title']) . '</h3>
+                  <p>' . htmlspecialchars($event['username']) . '</p>
+                </td>';
         } elseif (date('N', $start_ts) >= 6) {
-            echo '<td>Impossible</td>';
+            echo '<td class="slot impossible"></td>';
         } else {
-            echo '<td>
+            echo '<td class="slot available">
                 <a href="reservation-form.php?date=' . date('Y-m-d H:i:s', $start_ts) . '">
                     Réserver
                 </a>
