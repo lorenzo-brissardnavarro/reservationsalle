@@ -108,6 +108,48 @@ function username_process($pdo, $post) {
 }
 
 
+// Processus d'appel pour vérification prise de RDV
+function event_process($pdo, $post, $creator_id){
+    if ($post['service'] === 'libre') {
+        if (empty_fields($post, ['title', 'debut', 'fin', 'jour', 'description'])) {
+            return "Veuillez renseigner l'ensemble des champs";
+        }
+        $title = trim($post['title']);
+        $fin = $post['fin'];
+    } else {
+        if (empty_fields($post, ['debut', 'jour', 'description'])) {
+            return "Veuillez renseigner l'ensemble des champs";
+        }
+        $title = trim($post['service']);
+        $fin = date('H:i', strtotime($post['debut'] . ' +1 hour')
+        );
+    }
+    return event_verify($pdo, $title, $post['debut'], $fin, $post['jour'], trim($post['description']), $creator_id);
+}
+
+
+
+// Fonction de vérification des données de la réservation
+function event_verify($pdo, $title, $debut, $fin, $jour, $description, $creator_id){
+    $start_ts = strtotime($jour . ' ' . $debut);
+    $end_ts   = strtotime($jour . ' ' . $fin);
+    if ($end_ts <= $start_ts) {
+        return "L'heure de fin doit être supérieure à l'heure de début";
+    }
+    $semaine = get_days();
+    if (!in_array($jour, $semaine)) {
+        return "La date choisie ne correspond pas à la semaine en cours";
+    }
+    $startWeek = $semaine[0] . ' 00:00:00';
+    $endWeek   = $semaine[6] . ' 23:59:59';
+    if (event_taken(get_all($pdo, $startWeek, $endWeek), $start_ts, $end_ts)) {
+        return "Créneau déjà réservé";
+    }
+    return add_event($pdo, htmlspecialchars($title), htmlspecialchars($description), date('Y-m-d H:i:s', $start_ts), date('Y-m-d H:i:s', $end_ts), $creator_id);
+}
+
+
+
 // Mise à jour des informations de l'utilisateur dans BDD
 function update_profile($pdo, $id, $username, $password) {
     if (username_exists($pdo, $username, $id)) {
@@ -146,7 +188,6 @@ function get_information_user($pdo, $id){
 
 // Récupération des jours de la semaine
 function get_days(){
-    date_default_timezone_set("Europe/Paris");
     $semaine = [];
     $debut = strtotime("monday this week");
     for ($i = 0; $i < 7; $i++) {
@@ -158,7 +199,6 @@ function get_days(){
 
 // Récupération des heures
 function get_hours(){
-    date_default_timezone_set("Europe/Paris");
     $heures = [];
     $debut = strtotime("today 08:00");
     $fin = strtotime("today 19:00");
@@ -177,6 +217,7 @@ function get_all_services($pdo){
     $query->execute([]);
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 // Fonction pour savoir si le créneau est pris
 function event_taken($events, $start_ts, $end_ts){
@@ -197,11 +238,12 @@ function add_event($pdo, $event_title, $description, $start_date, $end_date, $cr
 }
 
 
+
 // Fonction supprimer réservation
-function event_deletion($pdo, $id, $id_user){
-    $sql = "DELETE FROM event WHERE id = :id AND id_user = :id_user";
+function event_deletion($pdo, $id, $creator_id){
+    $sql = "DELETE FROM event WHERE id = :id AND creator_id = :creator_id";
     $query = $pdo->prepare($sql);
-    $query->execute([':id' => $id, ':id_user' => $id_user]);
+    $query->execute([':id' => $id, ':creator_id' => $creator_id]);
     return true;
 }
 
@@ -229,5 +271,6 @@ function event_by_id($pdo, $id){
     $query->execute([':id' => $id]);
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 

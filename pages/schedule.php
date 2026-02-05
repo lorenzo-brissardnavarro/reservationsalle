@@ -3,6 +3,7 @@ include '../includes/config.php';
 include '../includes/header.php';
 include '../includes/tools.php';
 
+
 date_default_timezone_set("Europe/Paris");
 $semaine = get_days();
 $heures = get_hours();
@@ -14,8 +15,6 @@ foreach ($events as $event) {
     $event['end_ts']   = strtotime($event['end_date']);
 }
 
-
-
 ?>
 
 <table>
@@ -23,7 +22,9 @@ foreach ($events as $event) {
     <td>&nbsp;</td>
     <?php
     foreach ($semaine as $jour) {
-      echo '<td>' . date('l j F Y', strtotime($jour)) . '</td>';
+      $timestamp = strtotime($jour);
+      $formatter = new IntlDateFormatter('fr_FR',IntlDateFormatter::FULL,IntlDateFormatter::NONE);
+      echo '<td>' . $formatter->format($timestamp) . '</td>';
     }
     ?>
   </tr>
@@ -34,15 +35,13 @@ foreach ($events as $event) {
     foreach ($semaine as $jour) {
         $start_ts = strtotime($jour . ' ' . $heure);
         $end_ts   = strtotime('+1 hour', $start_ts);
-        if (date('N', $start_ts) >= 6) {
-            echo '<td>Impossible</td>';
-            continue;
-        }
         $event = event_taken($events, $start_ts, $end_ts);
         if ($event) {
             echo '<td>
                     RDV pris
                   </td>';
+        } elseif (date('N', $start_ts) >= 6) {
+            echo '<td>Impossible</td>';
         } else {
             echo '<td>
                 <a href="reservation-form.php?date=' . date('Y-m-d H:i:s', $start_ts) . '">
@@ -55,3 +54,6 @@ foreach ($events as $event) {
   }
   ?>
 </table>
+
+
+<?php include '../includes/footer.php'; ?>

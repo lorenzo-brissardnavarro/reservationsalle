@@ -21,7 +21,26 @@ if (!empty($_POST)) {
     }
 }
 
+
+$error_suppression = "";
+// Suppression message
+if (!empty($_POST['delete'])) {
+    $delete = (int)$_POST['delete'];
+    if (!event_deletion($pdo, $delete, $_SESSION['id']))) {
+        $error_suppression = "Impossible de supprimer ce message.";
+    } else {
+        header("Location: profil.php");
+        exit;
+    }
+}
+
 $information = get_information_user($pdo, $_SESSION['id']);
+
+$semaine = get_days();
+$heures = get_hours();
+$debutSemaine = date('Y-m-d 00:00:00', strtotime(min($semaine)));
+$finSemaine = date('Y-m-d 23:59:59', strtotime(max($semaine)));
+$events = get_all($pdo, $debutSemaine, $finSemaine);
 
 ?>
 
@@ -46,6 +65,45 @@ $information = get_information_user($pdo, $_SESSION['id']);
             <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirmation du mot de passe">
             <input type="submit" value="Modifier">
         </form>
+    </section>
+    <section>
+        <h2>Mes RDV</h2>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <td>Début</td>
+                    <td>Fin</td>
+                    <td>Voir le détail</td>
+                    <td>Annuler</td>
+                </tr>
+            </thead>
+            <tbody>
+            <?php
+            if (!empty($events)) {
+                foreach ($events as $event) {
+                    echo '<tr>
+                        <td>' . $event['start_date'] . '</td>
+                        <td>' . $event['end_date'] . '</td>
+                        <td>
+                            <a href="reservation_detail.php?id=' . $event['id'] . '">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <form method="POST">
+                                <input type="hidden" name="delete" value="' . htmlspecialchars($event['id']) . '">
+                                <button type="submit">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </td>
+                    </tr>';
+                }
+            }
+            ?>
+            </tbody>
+        </table>
     </section>
 </main>
 
