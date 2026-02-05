@@ -23,7 +23,10 @@ $massages = get_all_services($pdo);
 $error = "";
 
 if (!empty($_POST['step']) && $_POST['step'] === 'Réserver') {
-    $result = event_process($pdo, $_POST, $_SESSION['id']);
+    if ($_POST['service'] !== 'libre') {
+        $duration = get_duration_by_service($massages, $_POST['service']);
+    }
+    $result = event_process($pdo, $_POST, $_SESSION['id'], $duration);
     if ($result !== true) {
         $error = $result;
     } else {
@@ -69,13 +72,9 @@ if (!empty($_POST['step']) && $_POST['step'] === 'Réserver') {
             echo '<label for="title">Titre</label>
                 <input type="text" name="title" id="title" placeholder="Titre de la réservation" >';
         } else {
-            echo '<p>Titre : ' . htmlspecialchars($_POST['service']) . '</p>';
-            foreach ($massages as $massage) {
-                if($massage['name'] === $_POST['service']){
-                    echo '<p>Durée : ' . $massage['duration'] . ' h</p>'; 
-                    break; 
-                } 
-            }
+            echo '<p>Titre : ' . htmlspecialchars($_POST['service']) . '</p>
+                <p>Durée : ' . get_duration_by_service($massages, $_POST['service']) . ' h</p>'; 
+                    
         }
         echo '<label for="debut">Heure de début</label>
             <select name="debut" id="debut">';

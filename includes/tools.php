@@ -109,7 +109,7 @@ function username_process($pdo, $post) {
 
 
 // Processus d'appel pour vérification prise de RDV
-function event_process($pdo, $post, $creator_id){
+function event_process($pdo, $post, $creator_id, $duration){
     if ($post['service'] === 'libre') {
         if (empty_fields($post, ['title', 'debut', 'fin', 'jour', 'description'])) {
             return "Veuillez renseigner l'ensemble des champs";
@@ -121,7 +121,7 @@ function event_process($pdo, $post, $creator_id){
             return "Veuillez renseigner l'ensemble des champs";
         }
         $title = trim($post['service']);
-        $fin = date('H:i', strtotime($post['debut'] . ' +1 hour')
+        $fin = date('H:i', strtotime($post['debut'] . ' +' . $duration .  ' hour')
         );
     }
     return event_verify($pdo, $title, $post['debut'], $fin, $post['jour'], trim($post['description']), $creator_id);
@@ -216,6 +216,17 @@ function get_all_services($pdo){
     $query = $pdo->prepare($sql);
     $query->execute([]);
     return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+// Fonction pour connaitre la durée d'une prestation
+function get_duration_by_service($services, $service_name){
+    foreach ($services as $service) {
+        if ($service['name'] === $service_name) {
+            return (int)$service['duration'];
+        }
+    }
+    return null;
 }
 
 
