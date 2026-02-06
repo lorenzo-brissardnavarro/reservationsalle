@@ -14,5 +14,5 @@ if(isset($_GET['id'])){
 
 
 $details = event_by_id($pdo, $creneau);
-
+var_dump($details);
 ?>

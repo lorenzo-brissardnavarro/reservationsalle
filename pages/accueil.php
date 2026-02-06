@@ -24,13 +24,15 @@ $massages = get_all_services($pdo);
             }
         echo '</div>';
     }
-    if(empty($_SESSION['id'])){
-        echo '<p>Pour réserver, veuillez vous <a href="signin.php">connecter</a> ou <a href="signup.php">créer un compte</a>.</p>';
-    } else {
-        echo '<p>Pour réserver un massage, accédez directement au <a href="schedule.php">planning</a>.</p>';
-    }
     ?>
 </section>
+<?php 
+if(empty($_SESSION['id'])){
+        echo '<p class="link">Pour réserver, veuillez vous <a href="signin.php">connecter</a> ou <a href="signup.php">créer un compte</a>.</p>';
+    } else {
+        echo '<p class="link">Pour réserver un massage, accédez directement au <a href="schedule.php">planning</a>.</p>';
+    }
+?>
 
 
 <?php include '../includes/footer.php'; ?>

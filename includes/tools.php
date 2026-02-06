@@ -233,8 +233,19 @@ function get_duration_by_service($services, $service_name){
 // Fonction pour savoir si le créneau est pris
 function event_taken($events, $start_ts, $end_ts){
     foreach ($events as $event) {
-        if ($event['start_ts'] < $end_ts && $event['end_ts'] > $start_ts) {
+        if ($event['start_date'] < $end_ts && $event['end_date'] > $start_ts) {
             return true;
+        }
+    }
+    return false;
+}
+
+
+// Fonction pour savoir si le créneau est pris
+function event_taken_hour($events, $start_ts, $end_ts){
+    foreach ($events as $event) {
+        if (strtotime($event['start_date']) === $start_ts && strtotime($event['end_date']) === $end_ts) {
+            return $event;
         }
     }
     return false;

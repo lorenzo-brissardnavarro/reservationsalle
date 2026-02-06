@@ -4,7 +4,6 @@ include '../includes/header.php';
 include '../includes/tools.php';
 
 
-date_default_timezone_set("Europe/Paris");
 $semaine = get_days();
 $heures = get_hours();
 $debutSemaine = date('Y-m-d 00:00:00', strtotime(min($semaine)));
@@ -35,11 +34,11 @@ foreach ($events as $event) {
     foreach ($semaine as $jour) {
         $start_ts = strtotime($jour . ' ' . $heure);
         $end_ts   = strtotime('+1 hour', $start_ts);
-        $event = event_taken($events, $start_ts, $end_ts);
-        if ($event) {
+        $event = event_taken_hour($events, $start_ts, $end_ts);
+        if ($event !== false) {
           echo '<td class="slot taken">
-                  <h3>' . htmlspecialchars($event['title']) . '</h3>
-                  <p>' . htmlspecialchars($event['username']) . '</p>
+                  <p>' . htmlspecialchars($event['event_title']) . '</p>
+                  <h3>' . htmlspecialchars($event['username']) . '</h3>
                 </td>';
         } elseif (date('N', $start_ts) >= 6) {
             echo '<td class="slot impossible"></td>';

@@ -16,7 +16,7 @@ $heure_choisie = date("H:i", strtotime($creneau));
 $semaine = get_days();
 $heures = get_hours();
 
-
+$user = get_information_user($pdo, $_SESSION['id']);
 $massages = get_all_services($pdo);
 
 
@@ -41,7 +41,7 @@ if (!empty($_POST['step']) && $_POST['step'] === 'Réserver') {
     <article class="auth-header">
         <i class="auth-icon fa-solid fa-user-plus"></i>
         <h1>Formulaire de réservation</h1>
-        <p class="subtitle">Utilisateur : </p>
+        <p class="subtitle">Utilisateur : <?php echo $user['username']?></p>
     </article>
     <?php 
     if (!empty($error)){

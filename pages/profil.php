@@ -58,7 +58,7 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
         ?>
         <form action="" method="POST">
             <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($information['login']); ?>">
+            <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($information['username']); ?>">
             <label for="password">Mot de passe</label>
             <input type="password" name="password" id="password" placeholder="Nouveau mot de passe">
             <label for="confirm_password">Confirmation du mot de passe</label>
@@ -67,7 +67,7 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
         </form>
     </section>
     <section>
-        <h2>Mes RDV</h2>
+        <h2>Mes Rendez-vous :</h2>
         <table class="admin-table">
             <thead>
                 <tr>
@@ -82,8 +82,8 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
             if (!empty($events)) {
                 foreach ($events as $event) {
                     echo '<tr>
-                        <td>' . htmlspecialchars($event['start_date']) . '</td>
-                        <td>' . htmlspecialchars($event['end_date']) . '</td>
+                        <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['start_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['start_date']))) . '</td>
+                        <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['end_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['end_date']))) . '</td>
                         <td>
                             <a href="reservation_detail.php?id=' . $event['id'] . '">
                                 <i class="fa-solid fa-magnifying-glass-plus"></i>
@@ -92,7 +92,7 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
                         <td>
                             <form method="POST">
                                 <input type="hidden" name="delete" value="' . htmlspecialchars($event['id']) . '">
-                                <button type="submit">
+                                <button type="submit" class="trash">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>

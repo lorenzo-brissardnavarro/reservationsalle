@@ -35,7 +35,7 @@ if (!empty($_POST)) {
         <label for="username">Login</label>
         <input type="text" name="username" id="username" placeholder="Votre identifiant">
         <label for="password">Mot de passe</label>
-        <input type="password" name="password" id="password" placeholder="Min. 6 caractères">
+        <input type="password" name="password" id="password" placeholder="Min. 6 caractères dont 1 chiffre">
         <label for="confirm_password">Confirmer le mot de passe</label>
         <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirmez votre mot de passe">
         <input type="submit" value="S'inscrire">
