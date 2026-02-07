@@ -69,12 +69,13 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
     if(!empty($events)){
       echo'  <section>
         <h2>Mes Rendez-vous :</h2>
-        <table class="admin-table">
+        <table class="admin-table profil-table">
             <thead>
                 <tr>
                     <td>Début</td>
                     <td>Fin</td>
                     <td>Voir le détail</td>
+                    <td>Modifier le RDV</td>
                     <td>Annuler</td>
                 </tr>
             </thead>
@@ -86,6 +87,11 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
                         <td>
                             <a href="reservation_detail.php?id=' . $event['id'] . '">
                                 <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="reservation-form.php?id=' . $event['id'] . '">
+                                <i class="fa-solid fa-pen"></i>
                             </a>
                         </td>
                         <td>

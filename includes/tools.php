@@ -307,7 +307,7 @@ function get_all($pdo, $startWeek, $endWeek){
 
 // Fonction réupérer tous les RDV d'une personne
 function event_by_user_in_week($pdo, $creator_id, $startWeek, $endWeek){
-    $sql = "SELECT * FROM event WHERE creator_id = :creator_id AND start_date < :end AND end_date > :start";
+    $sql = "SELECT * FROM event WHERE creator_id = :creator_id AND start_date < :end AND end_date > :start ORDER BY start_date ASC";
     $query = $pdo->prepare($sql);
     $query->execute([':creator_id'  => $creator_id, ':start' => $startWeek, ':end'   => $endWeek]);
     return $query->fetchAll(PDO::FETCH_ASSOC);

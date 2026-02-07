@@ -30,7 +30,7 @@ if (!empty($_POST['delete'])) {
 ?>
 
 
-<section>
+<section class="details">
     <h2>Détails de la réservation</h2>
     <?php
     if (!empty($error)) {
@@ -47,15 +47,17 @@ if (!empty($_POST['delete'])) {
         <p><strong>Description du massage : </strong>' . htmlspecialchars($details[0]['description']) . '</p>';
     ?>
     <h3>Modifier ou annuler la réservation</h3>
-    <a href="reservation-form.php?id=<?php echo (int)$details[0]['id']; ?>">
-        <i class="fa-solid fa-pen"></i>
-    </a>
-    <form method="POST">
-        <input type="hidden" name="delete" value="<?php echo (int)$details[0]['id']; ?>">
-        <button type="submit" class="trash">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-    </form>
+    <article>
+        <a href="reservation-form.php?id=<?php echo (int)$details[0]['id']; ?>">
+            Modifier la réservation
+        </a>
+        <form method="POST">
+            <input type="hidden" name="delete" value="<?php echo (int)$details[0]['id']; ?>">
+            <button type="submit" class="trash">
+                Annuler la réservation
+            </button>
+        </form>
+    </article>
 </section>
 
 
