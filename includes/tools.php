@@ -109,30 +109,39 @@ function username_process($pdo, $post) {
 
 
 // Processus d'appel pour vérification prise de RDV
-function event_process($pdo, $post, $creator_id, $duration){
+function event_process($pdo, $post, $creator_id, $duration, $event_id = null){
     if ($post['service'] === 'libre') {
-        if (empty_fields($post, ['title', 'debut', 'fin', 'jour', 'description'])) {
+        if (empty_fields($post, ['debut', 'fin', 'jour', 'description'])) {
             return "Veuillez renseigner l'ensemble des champs";
         }
-        $title = trim($post['title']);
+        $title = "Prestation libre";
         $fin = $post['fin'];
     } else {
         if (empty_fields($post, ['debut', 'jour', 'description'])) {
             return "Veuillez renseigner l'ensemble des champs";
         }
+        if ($duration === null || $duration <= 0) {
+            return "Durée du RDV invalide";
+        }
         $title = trim($post['service']);
         $fin = date('H:i', strtotime($post['debut'] . ' +' . $duration .  ' hour')
         );
     }
-    return event_verify($pdo, $title, $post['debut'], $fin, $post['jour'], trim($post['description']), $creator_id);
+    return event_verify($pdo, $title, $post['debut'], $fin, $post['jour'], trim($post['description']), $creator_id, $event_id);
 }
 
 
 
 // Fonction de vérification des données de la réservation
-function event_verify($pdo, $title, $debut, $fin, $jour, $description, $creator_id){
+function event_verify($pdo, $title, $debut, $fin, $jour, $description, $creator_id, $event_id = null){
+    if(date("H", strtotime($debut)) < "8" || date("H", strtotime($fin)) > "19"){
+        return "Les heures sélectionnées dépassent de la plage horaire";
+    }
     $start_ts = strtotime($jour . ' ' . $debut);
     $end_ts   = strtotime($jour . ' ' . $fin);
+    // if(strtotime("today") > strtotime($start_ts)){
+    //     return "Le créneau sélectionné a déjà eu lieu";
+    // }
     if ($end_ts <= $start_ts) {
         return "L'heure de fin doit être supérieure à l'heure de début";
     }
@@ -142,10 +151,21 @@ function event_verify($pdo, $title, $debut, $fin, $jour, $description, $creator_
     }
     $startWeek = $semaine[0] . ' 00:00:00';
     $endWeek   = $semaine[6] . ' 23:59:59';
-    if (event_taken(get_all($pdo, $startWeek, $endWeek), $start_ts, $end_ts)) {
+    $events = get_all($pdo, $startWeek, $endWeek);
+    if ($event_id !== null) {
+        foreach ($events as $key => $event) {
+            if ((int)$event['id'] === (int)$event_id) {
+                unset($events[$key]);
+            }
+        }
+    }
+    if (event_taken($events, $start_ts, $end_ts)) {
         return "Créneau déjà réservé";
     }
-    return add_event($pdo, htmlspecialchars($title), htmlspecialchars($description), date('Y-m-d H:i:s', $start_ts), date('Y-m-d H:i:s', $end_ts), $creator_id);
+    if ($event_id === null) {
+        return add_event($pdo, htmlspecialchars($title), htmlspecialchars($description), date('Y-m-d H:i:s', $start_ts), date('Y-m-d H:i:s', $end_ts), $creator_id);
+    }
+    return update_event($pdo, $event_id, htmlspecialchars($title), htmlspecialchars($description), date('Y-m-d H:i:s', $start_ts), date('Y-m-d H:i:s', $end_ts), $creator_id);
 }
 
 
@@ -202,7 +222,7 @@ function get_hours(){
     $heures = [];
     $debut = strtotime("today 08:00");
     $fin = strtotime("today 19:00");
-    while ($debut < $fin) {
+    while ($debut <= $fin) {
         array_push($heures, date("H:i", $debut));
         $debut = strtotime("+1 hour", $debut);
     }
@@ -233,7 +253,7 @@ function get_duration_by_service($services, $service_name){
 // Fonction pour savoir si le créneau est pris
 function event_taken($events, $start_ts, $end_ts){
     foreach ($events as $event) {
-        if ($event['start_date'] < $end_ts && $event['end_date'] > $start_ts) {
+        if (strtotime($event['start_date']) < $end_ts && strtotime($event['end_date']) > $start_ts) {
             return true;
         }
     }
@@ -244,7 +264,7 @@ function event_taken($events, $start_ts, $end_ts){
 // Fonction pour savoir si le créneau est pris
 function event_taken_hour($events, $start_ts, $end_ts){
     foreach ($events as $event) {
-        if (strtotime($event['start_date']) === $start_ts && strtotime($event['end_date']) === $end_ts) {
+        if (strtotime($event['start_date']) < $end_ts && strtotime($event['end_date']) > $start_ts) {
             return $event;
         }
     }
@@ -259,6 +279,13 @@ function add_event($pdo, $event_title, $description, $start_date, $end_date, $cr
     return true;
 }
 
+// Fonction modifier réservation
+function update_event($pdo, $event_id, $event_title, $description, $start_date, $end_date, $creator_id){
+    $sql = "UPDATE event SET event_title = :event_title, description = :description, start_date = :start_date, end_date = :end_date WHERE id = :id AND creator_id = :creator_id";
+    $query = $pdo->prepare($sql);
+    $query->execute([':event_title' => $event_title, ':description' => $description, ':start_date' => $start_date, ':end_date' => $end_date, ':id' => $event_id,  ':creator_id' => $creator_id]);
+    return true;
+}
 
 
 // Fonction supprimer réservation
@@ -289,7 +316,7 @@ function event_by_user_in_week($pdo, $creator_id, $startWeek, $endWeek){
 
 // Fonction récupérer RDV en particulier
 function event_by_id($pdo, $id){
-    $sql = "SELECT * FROM event INNER JOIN user ON user.id = event.creator_id WHERE event.id = :id";
+    $sql = "SELECT * FROM event WHERE event.id = :id";
     $query = $pdo->prepare($sql);
     $query->execute([':id' => $id]);
     return $query->fetchAll(PDO::FETCH_ASSOC);

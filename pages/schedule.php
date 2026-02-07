@@ -3,9 +3,14 @@ include '../includes/config.php';
 include '../includes/header.php';
 include '../includes/tools.php';
 
+if (!isset($_SESSION['id'])) {
+    header("Location: ../index.php");
+    exit;
+}
 
 $semaine = get_days();
 $heures = get_hours();
+$delete = array_pop($heures);
 $debutSemaine = date('Y-m-d 00:00:00', strtotime(min($semaine)));
 $finSemaine = date('Y-m-d 23:59:59', strtotime(max($semaine)));
 $events = get_all($pdo, $debutSemaine, $finSemaine);
@@ -40,7 +45,8 @@ foreach ($events as $event) {
                   <p>' . htmlspecialchars($event['event_title']) . '</p>
                   <h3>' . htmlspecialchars($event['username']) . '</h3>
                 </td>';
-        } elseif (date('N', $start_ts) >= 6) {
+        } elseif (date('N', $start_ts) >= 6){
+          // || strtotime("today") > strtotime($jour)
             echo '<td class="slot impossible"></td>';
         } else {
             echo '<td class="slot available">

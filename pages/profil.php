@@ -44,7 +44,6 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
 
 ?>
 
-<main>
     <section class="container-form">
         <article class="auth-header">
             <i class="auth-icon fa-solid fa-user-pen"></i>
@@ -66,7 +65,9 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
             <input type="submit" value="Modifier">
         </form>
     </section>
-    <section>
+    <?php
+    if(!empty($events)){
+      echo'  <section>
         <h2>Mes Rendez-vous :</h2>
         <table class="admin-table">
             <thead>
@@ -77,9 +78,7 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
                     <td>Annuler</td>
                 </tr>
             </thead>
-            <tbody>
-            <?php
-            if (!empty($events)) {
+            <tbody>';
                 foreach ($events as $event) {
                     echo '<tr>
                         <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['start_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['start_date']))) . '</td>
@@ -99,11 +98,10 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
                         </td>
                     </tr>';
                 }
-            }
-            ?>
-            </tbody>
+            echo '</tbody>
         </table>
-    </section>
-</main>
+    </section>';
+    }
+    ?>
 
 <?php include '../includes/footer.php'; ?>
