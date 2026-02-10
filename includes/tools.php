@@ -137,6 +137,9 @@ function event_verify($pdo, $title, $debut, $fin, $jour, $description, $creator_
     if(date("H", strtotime($debut)) < "8" || date("H", strtotime($fin)) > "19"){
         return "Les heures sélectionnées dépassent de la plage horaire";
     }
+    if (date('i', strtotime($debut)) !== '00' || date('i', strtotime($fin)) !== '00') {
+        return "Les rendez-vous doivent être sur des heures pleines uniquement";
+    }
     $start_ts = strtotime($jour . ' ' . $debut);
     $end_ts   = strtotime($jour . ' ' . $fin);
     // if(strtotime("today") > strtotime($start_ts)){

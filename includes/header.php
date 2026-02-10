@@ -10,27 +10,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-<header>
-    <h1>🌿 Salon de Massage Zenitude</h1>
-    <nav>
-        <ul>
-            <li>
-                <a href="accueil.php">Accueil</a>
-            </li>
-            <?php
-                if(!empty($_SESSION['id'])){
-                    echo '
-                    <li><a href="schedule.php">Planning</a></li>
-                    <li><a href="profil.php">Profil</a></li>
-                    <li><a href="deconnexion.php">Déconnexion</a></li>';
-                } else{
-                    echo '
-                    <li><a href="signup.php">Inscription</a></li>
-                    <li><a href="signin.php">Connexion</a></li>';
-                }
-                ?>
-        </ul>
-    </nav>
-    <hr>
-</header>
+    <header>
+        <h1>Salon de Massage Zenitude</h1>
+        <nav>
+            <ul>
+                <li>
+                    <a href="accueil.php">Accueil</a>
+                </li>
+                <?php
+                    if(!empty($_SESSION['id'])){
+                        echo '
+                        <li><a href="schedule.php">Planning</a></li>
+                        <li><a href="profil.php">Profil</a></li>
+                        <li><a href="deconnexion.php">Déconnexion</a></li>';
+                    } else{
+                        echo '
+                        <li><a href="signup.php">Inscription</a></li>
+                        <li><a href="signin.php">Connexion</a></li>';
+                    }
+                    ?>
+            </ul>
+        </nav>
+        <hr>
+    </header>
 <main>

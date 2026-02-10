@@ -21,45 +21,46 @@ foreach ($events as $event) {
 
 ?>
 
-<table>
-  <tr>
-    <td>&nbsp;</td>
+<div class="table-container">
+  <table>
+    <tr>
+      <td>&nbsp;</td>
+      <?php
+      foreach ($semaine as $jour) {
+        $timestamp = strtotime($jour);
+        $formatter = new IntlDateFormatter('fr_FR',IntlDateFormatter::FULL,IntlDateFormatter::NONE);
+        echo '<td>' . $formatter->format($timestamp) . '</td>';
+      }
+      ?>
+    </tr>
     <?php
-    foreach ($semaine as $jour) {
-      $timestamp = strtotime($jour);
-      $formatter = new IntlDateFormatter('fr_FR',IntlDateFormatter::FULL,IntlDateFormatter::NONE);
-      echo '<td>' . $formatter->format($timestamp) . '</td>';
+    foreach ($heures as $heure) {
+      echo '<tr>
+            <td>' . $heure . '</td>';
+      foreach ($semaine as $jour) {
+          $start_ts = strtotime($jour . ' ' . $heure);
+          $end_ts   = strtotime('+1 hour', $start_ts);
+          $event = event_taken_hour($events, $start_ts, $end_ts);
+          if ($event !== false) {
+            echo '<td class="slot taken">
+                    <p>' . htmlspecialchars($event['event_title']) . '</p>
+                    <h3>' . htmlspecialchars($event['username']) . '</h3>
+                  </td>';
+          } elseif (date('N', $start_ts) >= 6){
+            // || strtotime("today") > strtotime($jour)
+              echo '<td class="slot impossible"></td>';
+          } else {
+              echo '<td class="slot available">
+                  <a href="reservation-form.php?date=' . date('Y-m-d H:i:s', $start_ts) . '">
+                      Réserver
+                  </a>
+              </td>';
+          }
+      }
+      echo '</tr>';
     }
     ?>
-  </tr>
-  <?php
-  foreach ($heures as $heure) {
-    echo '<tr>
-          <td>' . $heure . '</td>';
-    foreach ($semaine as $jour) {
-        $start_ts = strtotime($jour . ' ' . $heure);
-        $end_ts   = strtotime('+1 hour', $start_ts);
-        $event = event_taken_hour($events, $start_ts, $end_ts);
-        if ($event !== false) {
-          echo '<td class="slot taken">
-                  <p>' . htmlspecialchars($event['event_title']) . '</p>
-                  <h3>' . htmlspecialchars($event['username']) . '</h3>
-                </td>';
-        } elseif (date('N', $start_ts) >= 6){
-          // || strtotime("today") > strtotime($jour)
-            echo '<td class="slot impossible"></td>';
-        } else {
-            echo '<td class="slot available">
-                <a href="reservation-form.php?date=' . date('Y-m-d H:i:s', $start_ts) . '">
-                    Réserver
-                </a>
-            </td>';
-        }
-    }
-    echo '</tr>';
-  }
-  ?>
-</table>
-
+  </table>
+</div>
 
 <?php include '../includes/footer.php'; ?>
