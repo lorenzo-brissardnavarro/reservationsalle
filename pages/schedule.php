@@ -46,8 +46,7 @@ foreach ($events as $event) {
                     <p>' . htmlspecialchars($event['event_title']) . '</p>
                     <h3>' . htmlspecialchars($event['username']) . '</h3>
                   </td>';
-          } elseif (date('N', $start_ts) >= 6){
-            // || strtotime("today") > strtotime($jour)
+          } elseif (date('N', $start_ts) >= 6 || strtotime("today") > strtotime($jour)){
               echo '<td class="slot impossible"></td>';
           } else {
               echo '<td class="slot available">

@@ -123,7 +123,7 @@ if (!empty($_POST['step'])) {
         if ($selected_service === 'libre' || $selected_service === 'Prestation libre' || $selected_service === ''){ 
             echo '<label for="fin">Heure de fin</label> 
             <select name="fin" id="fin">';
-            for ($i = 0; $i < count($heures); $i++) { 
+            for ($i = 1; $i < count($heures); $i++) { 
                 if(strtotime($heures[$i]) === strtotime($heure_choisie . "+1 hour")){ 
                     echo "<option value=".$heures[$i]." selected>".$heures[$i]."</option>"; 
             } else{ 
@@ -139,8 +139,7 @@ if (!empty($_POST['step'])) {
         if ($event_id !== null) {
             $date_value = date('Y-m-d', strtotime($event[0]['start_date']));
         }
-        echo '<input type="date" name="jour" id="jour" value="' . $date_value . '">';
-        // '"min="' . date("Y-m-d") . '" max="' . $semaine[4] .
+        echo '<input type="date" name="jour" id="jour" value="' . $date_value .  '"min="' . date("Y-m-d") . '"max="' . $semaine[4] . '">';
         ?>
         <label for="description">Description</label>
         <?php  

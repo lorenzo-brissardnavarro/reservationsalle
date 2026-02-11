@@ -206,7 +206,7 @@ form input[type="submit"]:hover {
 
 .table-container table {
     min-width: 700px;
-    width: auto;
+    width: 100%;
     border-collapse: collapse;
     background: white;
     border-radius: 15px;
@@ -222,6 +222,7 @@ table td {
     height: 70px;
     vertical-align: middle;
     overflow: hidden;
+    text-align: center;
 }
 
 table th {

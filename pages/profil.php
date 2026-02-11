@@ -69,43 +69,45 @@ $events = event_by_user_in_week($pdo, $_SESSION['id'], $debutSemaine, $finSemain
 if(!empty($events)){
     echo'  <section>
     <h2>Mes Rendez-vous :</h2>
-    <table class="admin-table profil-table">
-        <thead>
-            <tr>
-                <td>Début</td>
-                <td>Fin</td>
-                <td>Voir le détail</td>
-                <td>Modifier le RDV</td>
-                <td>Annuler</td>
-            </tr>
-        </thead>
-        <tbody>';
-            foreach ($events as $event) {
-                echo '<tr>
-                    <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['start_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['start_date']))) . '</td>
-                    <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['end_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['end_date']))) . '</td>
-                    <td>
-                        <a href="reservation_detail.php?id=' . $event['id'] . '">
-                            <i class="fa-solid fa-magnifying-glass-plus"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="reservation-form.php?id=' . $event['id'] . '">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <form method="POST">
-                            <input type="hidden" name="delete" value="' . htmlspecialchars($event['id']) . '">
-                            <button type="submit" class="trash">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>';
-            }
-        echo '</tbody>
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <td>Début</td>
+                    <td>Fin</td>
+                    <td>Voir le détail</td>
+                    <td>Modifier le RDV</td>
+                    <td>Annuler</td>
+                </tr>
+            </thead>
+            <tbody>';
+                foreach ($events as $event) {
+                    echo '<tr>
+                        <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['start_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['start_date']))) . '</td>
+                        <td>' . htmlspecialchars(date("d/m/Y", strtotime($event['end_date']))) . ' à ' . htmlspecialchars(date("H:i", strtotime($event['end_date']))) . '</td>
+                        <td>
+                            <a href="reservation_detail.php?id=' . $event['id'] . '">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="reservation-form.php?id=' . $event['id'] . '">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <form method="POST">
+                                <input type="hidden" name="delete" value="' . htmlspecialchars($event['id']) . '">
+                                <button type="submit" class="trash">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>';
+                }
+            echo '</tbody>
+        </table>
+    </div>
 </section>';
 }
 ?>
