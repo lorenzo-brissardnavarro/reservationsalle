@@ -142,7 +142,7 @@ function event_verify($pdo, $title, $debut, $fin, $jour, $description, $creator_
     }
     $start_ts = strtotime($jour . ' ' . $debut);
     $end_ts   = strtotime($jour . ' ' . $fin);
-    if(strtotime("today") > strtotime($start_ts)){
+    if(strtotime("today") > strtotime($jour)){
         return "Le créneau sélectionné a déjà eu lieu";
     }
     if ($end_ts <= $start_ts) {
