@@ -14,15 +14,17 @@ $massages = get_all_services($pdo);
     <?php 
     foreach($massages as $massage){
         echo '
-        <div class="massage-card">
-            <img src="../images/' . $massage['image'] . '" alt="' . htmlspecialchars($massage['name']) . '">
-            <h3>' . htmlspecialchars($massage['name']) . '</h3>';
-            if($massage['duration'] > 1){
-                echo '<p>Durée : ' . $massage['duration'] . ' heures</p>';
-            } else{
-                echo '<p>Durée : ' . $massage['duration'] . ' heure</p>';
-            }
-        echo '</div>';
+        <a href="schedule.php">
+            <div class="massage-card">
+                <img src="../images/' . $massage['image'] . '" alt="' . htmlspecialchars($massage['name']) . '">
+                <h3>' . htmlspecialchars($massage['name']) . '</h3>';
+                if($massage['duration'] > 1){
+                    echo '<p>Durée : ' . $massage['duration'] . ' heures</p>';
+                } else{
+                    echo '<p>Durée : ' . $massage['duration'] . ' heure</p>';
+                }
+            echo '</div>
+        </a>';
     }
     ?>
 </section>

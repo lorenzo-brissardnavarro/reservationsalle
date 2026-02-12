@@ -463,8 +463,12 @@ footer {
 }
 
 .slot.taken {
-    background-color: #ddd;
+    background-color: ghostwhite;
     color: #444;
+}
+
+.my_slot{
+    background-color: lavender;
 }
 
 .slot.impossible {

@@ -10,7 +10,7 @@ $error = "";
 if (!empty($_POST)) {
     $result = username_process($pdo, $_POST);
     if ($result === true) {
-        header("Location: accueil.php");
+        header("Location: schedule.php");
         exit;
     } else {
         $error = $result;

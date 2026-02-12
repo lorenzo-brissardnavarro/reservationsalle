@@ -4,7 +4,7 @@ include '../includes/header.php';
 include '../includes/tools.php';
 
 if (!isset($_SESSION['id'])) {
-    header("Location: ../index.php");
+    header("Location: signin.php");
     exit;
 }
 
@@ -42,10 +42,19 @@ foreach ($events as $event) {
           $end_ts   = strtotime('+1 hour', $start_ts);
           $event = event_taken_hour($events, $start_ts, $end_ts);
           if ($event !== false) {
+            if($event['creator_id'] === $_SESSION['id']){
+              echo '<td class="slot my_slot">
+                      <a href="reservation_detail.php?id=' . $event['id'] . '">
+                        <p>' . htmlspecialchars($event['event_title']) . '</p>
+                        <h3>Vous</h3>
+                      </a>
+                    </td>';
+            } else{
             echo '<td class="slot taken">
                     <p>' . htmlspecialchars($event['event_title']) . '</p>
                     <h3>' . htmlspecialchars($event['username']) . '</h3>
                   </td>';
+            }
           } elseif (date('N', $start_ts) >= 6 || strtotime("today") > strtotime($jour)){
               echo '<td class="slot impossible"></td>';
           } else {
